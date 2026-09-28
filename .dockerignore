@@ -1,0 +1,40 @@
+# Everything listed here is NOT sent to the Docker engine during `docker build`,
+# so it can never end up inside the image. See docs/06_deployment_containerization.md.
+
+# --- Secrets: never bake keys into an image. Pass them at run time with --env-file. ---
+.env
+*.env.local
+**/*.pem
+**/*.key
+
+# --- Version backups, archives and local tooling ---
+Project-versions/
+*.zip
+.claude/
+.git/
+.vscode/
+.idea/
+
+# --- Python caches and virtual environments ---
+**/__pycache__/
+**/*.pyc
+**/.ipynb_checkpoints/
+.venv/
+venv/
+env/
+
+# --- Heavy notebook outputs (the UI only needs the result CSVs) ---
+notebooks/*.ipynb
+notebooks/*.png
+
+# --- Raw/interim data pulls (the app only needs processed + gnn) ---
+data/raw/
+data/interim/
+
+# --- Local logs and stray files ---
+*_err.txt
+*_out.txt
+=*
+Thumbs.db
+.DS_Store
+

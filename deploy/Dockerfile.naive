@@ -1,0 +1,16 @@
+# ⚠ DELIBERATELY INSECURE — used only for the Trivy before/after demo.
+# Compare with the real ../Dockerfile. Scan both:
+#   trivy config deploy/Dockerfile.naive     → findings (root user, no healthcheck, ...)
+#   trivy config Dockerfile                  → clean
+# Never build or publish this file.
+
+FROM python:latest
+
+WORKDIR /app
+COPY . .
+
+# Copies .env into the image — anyone who pulls it can read the keys.
+RUN pip install -r requirements.txt
+
+EXPOSE 8000 8501
+CMD uvicorn main:app --app-dir backend --host 0.0.0.0 --port 8000 & streamlit run frontend/app.py

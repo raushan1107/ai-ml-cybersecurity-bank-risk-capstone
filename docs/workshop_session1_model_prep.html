@@ -1,0 +1,580 @@
+<title>CAMEL Sentinel Workshop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F6F3EC; --surface:#FFFFFF; --surface-2:#FBF8F1; --border:#E4DDC9;
+    --ink:#1C2430; --ink-muted:#5E6673; --ink-faint:#8B9099;
+    --accent:#A6631A; --accent-ink:#FFFFFF; --accent-soft:#F1E2C9;
+    --good:#2E7D5C; --good-soft:#E1F0E7; --risk:#B23A2E; --risk-soft:#F7E4E1;
+    --code-bg:#10141B; --code-ink:#DCE2EC; --code-comment:#7C8794;
+    --code-string:#B7CD7E; --code-keyword:#E3A94E; --code-func:#7FB4D9;
+    --code-number:#D48FB0; --code-border:#262D38;
+    --shadow: 0 1px 2px rgba(28,36,48,.06), 0 6px 20px rgba(28,36,48,.05);
+    --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-body:'Source Sans 3', -apple-system, 'Segoe UI', sans-serif;
+    --font-mono:'JetBrains Mono', SFMono-Regular, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12161D; --surface:#1A2028; --surface-2:#1F2630; --border:#2B323D;
+      --ink:#ECEAE2; --ink-muted:#A2AAB6; --ink-faint:#707885;
+      --accent:#E3A94E; --accent-ink:#1C1405; --accent-soft:#3A2E15;
+      --good:#5EBE93; --good-soft:#17281F; --risk:#E0796B; --risk-soft:#2E1917;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 26px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12161D; --surface:#1A2028; --surface-2:#1F2630; --border:#2B323D;
+    --ink:#ECEAE2; --ink-muted:#A2AAB6; --ink-faint:#707885;
+    --accent:#E3A94E; --accent-ink:#1C1405; --accent-soft:#3A2E15;
+    --good:#5EBE93; --good-soft:#17281F; --risk:#E0796B; --risk-soft:#2E1917;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 26px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body);
+    font-size:16px; line-height:1.6; padding-inline:20px;
+  }
+  @media (prefers-reduced-motion: no-preference){ html{ scroll-behavior:smooth; } }
+  h1,h2,h3{ font-family:var(--font-display); color:var(--ink); text-wrap:balance; margin:0; }
+  a{ color:var(--accent); }
+  .measure{ max-width:68ch; }
+  .wrap{ max-width:860px; margin-inline:auto; }
+  code, .mono{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+
+  /* ---------- top bar / step tracker ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter:blur(6px); border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{ max-width:860px; margin-inline:auto; padding-block:10px; }
+  .brand-row{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .brand{ display:flex; align-items:baseline; gap:8px; font-family:var(--font-display); font-weight:700; font-size:1.05rem; }
+  .brand .dot{ color:var(--accent); }
+  .brand-tag{ font-family:var(--font-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); }
+  .tracker{ display:flex; gap:6px; overflow-x:auto; margin-top:8px; padding-bottom:2px; scrollbar-width:thin; }
+  .tracker a{
+    flex:0 0 auto; font-family:var(--font-mono); font-size:.72rem; text-decoration:none;
+    color:var(--ink-muted); border:1px solid var(--border); border-radius:999px;
+    padding:4px 10px; white-space:nowrap; transition:color .15s, border-color .15s, background .15s;
+  }
+  .tracker a.active{ color:var(--accent-ink); background:var(--accent); border-color:var(--accent); }
+
+  /* ---------- hero / intro ---------- */
+  .hero{ padding-block:36px 8px; }
+  .eyebrow{ font-family:var(--font-mono); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+  .hero h1{ font-size:clamp(1.8rem, 4vw, 2.6rem); font-weight:700; line-height:1.12; }
+  .hero .lede{ margin-top:14px; font-size:1.08rem; color:var(--ink-muted); }
+  .meta-strip{ display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
+  .meta-chip{
+    display:flex; flex-direction:column; gap:2px; background:var(--surface); border:1px solid var(--border);
+    border-radius:10px; padding:8px 14px; box-shadow:var(--shadow);
+  }
+  .meta-chip .k{ font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); }
+  .meta-chip .v{ font-weight:600; font-size:.92rem; }
+
+  /* ---------- generic section ---------- */
+  section{ padding-block:34px; border-top:1px solid var(--border); }
+  section:first-of-type{ border-top:none; }
+  .section-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:14px; }
+  .section-num{ font-family:var(--font-mono); color:var(--ink-faint); font-size:.9rem; }
+  section h2{ font-size:1.5rem; font-weight:700; }
+  .callout{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+    padding:16px 18px; margin-top:16px;
+  }
+  .callout.good{ background:var(--good-soft); border-color:color-mix(in srgb, var(--good) 45%, var(--border)); }
+  .callout p{ margin:0; }
+  .callout .label{ font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--good); font-weight:600; margin-bottom:6px;}
+
+  table{ width:100%; border-collapse:collapse; margin-top:14px; font-size:.92rem; }
+  caption{ text-align:left; font-size:.8rem; color:var(--ink-faint); margin-bottom:6px; }
+  th, td{ text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+  th{ font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); font-weight:600; }
+  td.mono{ color:var(--ink-muted); }
+  .table-wrap{ overflow-x:auto; }
+
+  .roadmap-list{ list-style:none; margin:16px 0 0; padding:0; display:flex; flex-direction:column; gap:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--surface); box-shadow:var(--shadow); }
+  .roadmap-list li{ display:flex; gap:14px; padding:12px 16px; border-top:1px solid var(--border); align-items:baseline; }
+  .roadmap-list li:first-child{ border-top:none; }
+  .roadmap-list .n{ font-family:var(--font-mono); color:var(--accent); font-weight:600; flex:0 0 auto; }
+  .roadmap-list .t{ font-weight:600; }
+  .roadmap-list .d{ color:var(--ink-muted); font-size:.92rem; }
+
+  /* ---------- cell blocks ---------- */
+  .cell{ margin-top:22px; }
+  .cell-meta{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .cell-index{ font-family:var(--font-mono); font-size:.82rem; color:var(--accent); font-weight:600; }
+  .cell-meta h3{ font-size:1.12rem; font-weight:700; }
+  .cell-note{ margin:6px 0 12px; color:var(--ink-muted); max-width:68ch; }
+  .code-block{
+    background:var(--code-bg); border:1px solid var(--code-border); border-radius:10px;
+    padding:14px 16px; overflow-x:auto; box-shadow:var(--shadow); margin:0;
+  }
+  .code-block code{ color:var(--code-ink); font-size:.86rem; line-height:1.55; white-space:pre; }
+  .token.comment{ color:var(--code-comment); font-style:italic; }
+  .token.string{ color:var(--code-string); }
+  .token.keyword{ color:var(--code-keyword); font-weight:600; }
+  .token.builtin, .token.class-name{ color:#8FD1C0; }
+  .token.function{ color:var(--code-func); }
+  .token.number{ color:var(--code-number); }
+  .token.boolean, .token.operator{ color:var(--code-keyword); }
+  .token.punctuation{ color:var(--code-ink); opacity:.7; }
+  .output-note{ margin-top:10px; font-size:.88rem; color:var(--ink-muted); display:flex; gap:8px; }
+  .output-note .tag{ font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); border:1px solid var(--border); border-radius:5px; padding:1px 6px; flex:0 0 auto; height:fit-content; }
+
+  .flag{ display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; padding:3px 9px; border-radius:999px; border:1px solid var(--border); color:var(--ink-muted); }
+  .flag.risk{ color:var(--risk); background:var(--risk-soft); border-color:transparent; }
+
+  footer{ padding-block:30px 50px; color:var(--ink-faint); font-size:.85rem; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; border-top:1px solid var(--border); }
+  footer .brand{ color:var(--ink-muted); font-size:.9rem; }
+
+  @media (max-width: 640px){
+    .hero h1{ font-size:1.6rem; }
+    footer{ flex-direction:column; }
+  }
+</style>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand-row">
+      <div class="brand">RR Skillverse <span class="dot">&middot;</span> CAMEL Sentinel</div>
+      <div class="brand-tag">Live workshop &middot; Session 1</div>
+    </div>
+    <nav class="tracker" id="tracker" aria-label="Workshop steps">
+      <a href="#problem">Problem</a>
+      <a href="#dataset">Dataset</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#step-1">1 Setup</a>
+      <a href="#step-2">2 Pull data</a>
+      <a href="#step-3">3 Ratios</a>
+      <a href="#step-4">4 Score</a>
+      <a href="#step-5">5 EDA</a>
+      <a href="#step-6">6 Model</a>
+      <a href="#step-7">7 XAI</a>
+      <a href="#step-8">8 RAI</a>
+      <a href="#step-9">9 Export</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" id="intro">
+    <div class="eyebrow">Model-Building Workshop</div>
+    <h1>CAMEL Sentinel &mdash; build a bank health-risk model, cell by cell</h1>
+    <p class="lede measure">Today we build the model-preparation half of CAMEL Sentinel together: pull real bank data, engineer the six CAMEL ratios, train a baseline risk model, and make it explain its own decisions. Copy each cell into your own Jupyter notebook, in order, and run it &mdash; by the end you'll have a trained, explainable model file on your own machine.</p>
+    <div class="meta-strip">
+      <div class="meta-chip"><span class="k">Format</span><span class="v">10 cells, run in order</span></div>
+      <div class="meta-chip"><span class="k">You need</span><span class="v">Python 3.9+ &amp; Jupyter</span></div>
+      <div class="meta-chip"><span class="k">You'll leave with</span><span class="v">camel_baseline_model.pkl</span></div>
+      <div class="meta-chip"><span class="k">Covers</span><span class="v">Data &rarr; Features &rarr; Model &rarr; XAI &rarr; RAI</span></div>
+    </div>
+  </section>
+
+  <section id="problem">
+    <div class="section-head"><h2>The problem we're solving</h2></div>
+    <p class="measure">Bank regulators score every bank they supervise on <strong>CAMELS</strong> &mdash; <strong>C</strong>apital adequacy, <strong>A</strong>sset quality, <strong>M</strong>anagement, <strong>E</strong>arnings, <strong>L</strong>iquidity, <strong>S</strong>ensitivity to market risk &mdash; a 1 (strongest) to 5 (weakest) rating built from exams and ratio analysis. A weak rating is an early warning that a bank is heading toward trouble.</p>
+    <p class="measure">Here's the catch: real CAMELS ratings are <strong>confidential supervisory information</strong>. They're shared only with a bank's own management and its regulator &mdash; on purpose, so a public downgrade doesn't trigger the very bank run the exam was trying to prevent. No dataset anywhere contains real, regulator-issued CAMELS labels for individual banks.</p>
+    <div class="callout">
+      <div class="label">So what are we actually predicting?</div>
+      <p>Exactly what the peer-reviewed bank-failure-prediction literature predicts: a <strong>transparent, documented proxy</strong> &mdash; not the confidential real thing. We build (1) a rule-based composite score from public financial ratios, and (2) a real "did this bank fail?" flag from FDIC's public failure history, and we use the second to check that the first is actually tracking real distress. Every prediction this model makes gets that caveat attached: decision-support and early-warning, never a replacement for a regulator's judgment.</p>
+    </div>
+  </section>
+
+  <section id="dataset">
+    <div class="section-head"><h2>The dataset</h2></div>
+    <p class="measure">We're using one dataset today: the <strong>FDIC BankFind Suite API</strong> &mdash; free, public, no login required for a session like this. It's real U.S. bank regulatory financial data, quarterly, going back to 1992, covering every FDIC-insured institution.</p>
+    <div class="table-wrap">
+      <table>
+        <caption>The three endpoints we call, in Cell 2</caption>
+        <thead><tr><th>Endpoint</th><th>Gives us</th><th>We use it for</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">institutions</td><td>Bank identity &amp; metadata &mdash; name, state, charter type, asset size</td><td>Grouping banks; the fairness check in Step 8</td></tr>
+          <tr><td class="mono">financials</td><td>Quarterly Call Report fields &mdash; equity, capital ratios, non-performing loans, income, deposits</td><td>The raw numbers behind every CAMEL ratio</td></tr>
+          <tr><td class="mono">failures</td><td>Every FDIC-insured bank failure on record</td><td>Our real, independent "did it fail?" label</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <div class="label">If your machine can't reach the API</div>
+      <p>Cell 2 tries the live pull and tells you plainly if it can't connect. If that happens, Cell 3 builds a synthetic sample with the exact same columns and realistic distributions, so you never get stuck &mdash; every later cell runs identically either way. Swap back to live data the moment you have a connection; just don't treat the synthetic numbers as findings about real banks.</p>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <div class="section-head"><h2>The path we'll follow</h2></div>
+    <p class="measure">Nine cells, in this order &mdash; feature engineering has to happen before we can explore or model the data, so ratios come right after the pull:</p>
+    <ol class="roadmap-list">
+      <li><span class="n">01</span><span class="t">Setup</span><span class="d">&mdash; imports &amp; environment</span></li>
+      <li><span class="n">02</span><span class="t">Pull data</span><span class="d">&mdash; call the live FDIC API</span></li>
+      <li><span class="n">03</span><span class="t">Fallback</span><span class="d">&mdash; synthetic sample if Step 2 couldn't reach the API</span></li>
+      <li><span class="n">04</span><span class="t">Build CAMEL ratios</span><span class="d">&mdash; feature engineering, the six components</span></li>
+      <li><span class="n">05</span><span class="t">Composite score</span><span class="d">&mdash; combine the ratios into one proxy rating</span></li>
+      <li><span class="n">06</span><span class="t">EDA</span><span class="d">&mdash; look at the data before trusting it</span></li>
+      <li><span class="n">07</span><span class="t">Baseline model</span><span class="d">&mdash; train a classifier on real failure history</span></li>
+      <li><span class="n">08</span><span class="t">XAI</span><span class="d">&mdash; SHAP explains every prediction</span></li>
+      <li><span class="n">09</span><span class="t">RAI &amp; export</span><span class="d">&mdash; fairness check, model card, save the model</span></li>
+    </ol>
+  </section>
+
+  <!-- STEP 1 -->
+  <section id="step-1">
+    <div class="section-head"><span class="section-num">01</span><h2>Setup</h2></div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[1]:</span><h3>Imports &amp; environment</h3></div>
+      <p class="cell-note">Everything we need for the rest of the session. If a package is missing, uncomment the install line and run it once.</p>
+      <pre class="code-block"><code class="language-python"># If a package is missing in your environment, uncomment and run once:
+# !pip install pandas numpy requests matplotlib scikit-learn shap
+
+import numpy as np
+import pandas as pd
+import requests
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+import shap
+import warnings
+warnings.filterwarnings("ignore")
+
+pd.set_option("display.max_columns", 50)
+RNG_SEED = 42
+rng = np.random.default_rng(RNG_SEED)
+print("Environment ready.")</code></pre>
+    </div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section id="step-2">
+    <div class="section-head"><span class="section-num">02</span><h2>Pull data from the FDIC API</h2></div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[2]:</span><h3>Live pull &mdash; institutions, financials, failures</h3></div>
+      <p class="cell-note">One small helper (<code>fdic_get</code>) wraps the shared request logic; then we call all three endpoints for the most recent full-year quarter. <code>LIVE_PULL_OK</code> tells Cell 3 whether it needs to step in.</p>
+      <pre class="code-block"><code class="language-python">FDIC_BASE = "https://banks.data.fdic.gov/api"
+
+def fdic_get(endpoint, params, timeout=30):
+    resp = requests.get(f"{FDIC_BASE}/{endpoint}", params=params, timeout=timeout)
+    resp.raise_for_status()
+    payload = resp.json()
+    return pd.DataFrame([row["data"] for row in payload.get("data", [])])
+
+FIELDS = ",".join([
+    "CERT", "REPDTE", "ASSET", "EQ", "RBCT1J", "RBC1RWAJ",
+    "NPERFV", "LNATRES", "NETINC", "NIMY", "ROA", "ROE", "EEFFR", "LNLSNET", "DEP",
+])
+
+LIVE_PULL_OK = False
+try:
+    # No ACTIVE:1 filter, and a limit well above one quarter's ~4,700 banks:
+    # a bank that later failed is, by definition, not "active" today - filtering
+    # to ACTIVE:1 (or truncating the pull) would silently drop it before we ever
+    # get to check whether it failed. See Cell 4 for the other half of this fix.
+    institutions = fdic_get("institutions", {
+        "fields": "CERT,NAME,STALP,CHARTER,ASSET,BKCLASS", "limit": 10000, "format": "json"})
+    financials = fdic_get("financials", {"filters": "REPDTE:20231231",
+        "fields": FIELDS, "limit": 5000, "format": "json"})
+    failures = fdic_get("failures", {"fields": "CERT,NAME,FAILDATE,CITYST,SAVR,COST",
+        "limit": 5000, "format": "json"})
+    LIVE_PULL_OK = all(len(df) > 0 for df in [institutions, financials, failures])
+except Exception as e:
+    print(f"Live FDIC pull unavailable here ({type(e).__name__}). Using the fallback in the next cell.")
+
+print("Live pull succeeded:", LIVE_PULL_OK)</code></pre>
+      <div class="output-note"><span class="tag">expect</span> either "Live pull succeeded: True" with real bank names, or a short message explaining why not &mdash; both are fine, Cell 3 handles it.</div>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section id="step-3">
+    <div class="section-head"><span class="section-num">03</span><h2>Fallback sample</h2></div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[3]:</span><h3>Only runs if Cell 2 couldn't reach the API</h3></div>
+      <p class="cell-note">Same column names, realistic distributions, and a built-in relationship between weak fundamentals and failure &mdash; so every cell below behaves identically either way. If Cell 2 succeeded, this cell does nothing.</p>
+      <pre class="code-block"><code class="language-python">if not LIVE_PULL_OK:
+    n_banks = 1500
+    cert = np.arange(100000, 100000 + n_banks)
+
+    institutions = pd.DataFrame({
+        "CERT": cert,
+        "NAME": [f"Synthetic Bank {i}" for i in range(n_banks)],
+        "STALP": rng.choice(["NY", "CA", "TX", "IL", "OH", "GA", "FL", "PA"], n_banks),
+        "CHARTER": rng.choice(["N", "SM", "SB", "NM"], n_banks),
+        "ASSET": rng.lognormal(mean=12, sigma=1.5, size=n_banks).round(0),
+        "BKCLASS": rng.choice(["N", "SM", "SB", "NM"], n_banks),
+    })
+
+    tier1 = rng.normal(11, 3, n_banks).clip(2, 25)
+    npl_ratio = rng.gamma(1.5, 0.8, n_banks).clip(0, 15)
+    provision_ratio = (npl_ratio * rng.uniform(0.3, 0.6, n_banks)).clip(0, 8)
+    roa = rng.normal(1.0, 0.6, n_banks) - 0.15 * (npl_ratio - npl_ratio.mean())
+    efficiency_ratio = rng.normal(62, 12, n_banks).clip(30, 110)
+    ldr = rng.normal(80, 15, n_banks).clip(30, 130)
+    liquid_asset_ratio = rng.normal(18, 8, n_banks).clip(2, 50)
+
+    financials = pd.DataFrame({
+        "CERT": cert, "REPDTE": "20231231", "ASSET": institutions["ASSET"],
+        "EQ": (institutions["ASSET"] * (tier1 / 100) * rng.uniform(0.8, 1.1, n_banks)).round(0),
+        "RBCT1J": tier1.round(2), "RBC1RWAJ": (tier1 * rng.uniform(0.9, 1.1, n_banks)).round(2),
+        "NPERFV": npl_ratio.round(2), "LNATRES": provision_ratio.round(2),
+        "NETINC": (roa / 100 * institutions["ASSET"]).round(0),
+        "NIMY": rng.normal(3.3, 0.7, n_banks).clip(0.5, 6).round(2),
+        "ROA": roa.round(2), "ROE": (roa * rng.uniform(8, 12, n_banks)).round(2),
+        "EEFFR": efficiency_ratio.round(2),
+        "LNLSNET": (institutions["ASSET"] * rng.uniform(0.5, 0.8, n_banks)).round(0),
+        "DEP": (institutions["ASSET"] * rng.uniform(0.75, 0.92, n_banks)).round(0),
+        "LDR": ldr.round(2), "LIQ_RATIO": liquid_asset_ratio.round(2),
+    })
+
+    distress = (
+        -0.35 * (tier1 - tier1.mean()) / tier1.std()
+        + 0.30 * (npl_ratio - npl_ratio.mean()) / npl_ratio.std()
+        - 0.20 * (roa - roa.mean()) / roa.std()
+        + 0.15 * (efficiency_ratio - efficiency_ratio.mean()) / efficiency_ratio.std()
+        - 0.10 * (liquid_asset_ratio - liquid_asset_ratio.mean()) / liquid_asset_ratio.std()
+        + rng.normal(0, 0.5, n_banks)
+    )
+    fail_threshold = np.quantile(distress, 0.97)
+    failed_mask = distress >= fail_threshold
+
+    failures = pd.DataFrame({
+        "CERT": cert[failed_mask], "NAME": institutions.loc[failed_mask, "NAME"].values,
+        "FAILDATE": "2024-06-30", "CITYST": institutions.loc[failed_mask, "STALP"].values,
+        "SAVR": "SYN", "COST": rng.uniform(1e5, 5e7, failed_mask.sum()).round(0),
+    })
+    print(f"Synthetic sample ready: {n_banks} banks, {len(failures)} flagged failed "
+          f"({len(failures)/n_banks:.1%}).")</code></pre>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section id="step-4">
+    <div class="section-head"><span class="section-num">04</span><h2>Build the CAMEL ratios</h2></div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[4]:</span><h3>Feature engineering &mdash; one ratio per component</h3></div>
+      <p class="cell-note">Merge <code>financials</code> (the base population &mdash; every bank that filed a Call Report this quarter) with <code>institutions</code> left-joined on for identity metadata, then compute one ratio for each CAMEL letter. The merge order matters: joining the other way round (<code>institutions</code> as the base) would silently drop any bank not in that pull &mdash; including, worst of all, banks that have since failed. Note also the honest caveat on <code>efficiency_ratio</code>: <strong>Management</strong> is the one component with no clean financial-statement equivalent, so we approximate it &mdash; a standard, literature-backed substitution, not a claim it's equivalent to real supervisory judgment.</p>
+      <pre class="code-block"><code class="language-python">df = financials.merge(institutions, on="CERT", how="left", suffixes=("", "_inst"))
+df["failed"] = df["CERT"].isin(failures["CERT"]).astype(int)
+
+camel = pd.DataFrame({"CERT": df["CERT"], "NAME": df["NAME"], "STALP": df["STALP"], "ASSET": df["ASSET"]})
+
+# RBC1RWAJ, not RBCT1J: RBCT1J is a DOLLAR AMOUNT (Tier 1 capital in
+# thousands), not a percentage - confirmed against the live API. .clip
+# guards against a handful of raw records with implausible outlier values.
+camel["tier1_ratio"] = df["RBC1RWAJ"].clip(lower=0, upper=50)   # C - Capital adequacy
+camel["npl_ratio"] = df["NPERFV"]                        # A - Asset quality
+camel["efficiency_ratio"] = df["EEFFR"]                  # M - Management (proxy only, see note above)
+camel["roa"] = df["ROA"]                                 # E - Earnings
+# loan_deposit_ratio, not a "liquid assets" field: the FDIC fields we pull
+# never include one, so that column would be 100% missing on live data.
+camel["loan_deposit_ratio"] = df["LNLSNET"] / df["DEP"] * 100   # L - Liquidity
+camel["loan_concentration"] = df["LNLSNET"] / df["ASSET"] * 100  # S - Sensitivity proxy
+
+camel["failed"] = df["failed"]
+camel.head()</code></pre>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section id="step-5">
+    <div class="section-head"><span class="section-num">05</span><h2>Composite proxy rating</h2></div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[5]:</span><h3>Combine six ratios into one 1&ndash;5 rating</h3></div>
+      <p class="cell-note">Each ratio is z-scored in its "healthier" direction, averaged, then bucketed into quintiles &mdash; 1 is healthiest, 5 is weakest, matching CAMELS' own convention. This becomes our regression/classification target since no ground-truth rating exists to train against.</p>
+      <pre class="code-block"><code class="language-python">def healthy_z(series, higher_is_better=True):
+    z = (series - series.mean()) / series.std()
+    return z if higher_is_better else -z
+
+camel["z_capital"] = healthy_z(camel["tier1_ratio"], True)
+camel["z_asset_quality"] = healthy_z(camel["npl_ratio"], False)
+camel["z_management"] = healthy_z(camel["efficiency_ratio"], False)
+camel["z_earnings"] = healthy_z(camel["roa"], True)
+camel["z_liquidity"] = healthy_z(camel["loan_deposit_ratio"], False)  # lower loan/deposit = more liquid
+camel["z_sensitivity"] = healthy_z(camel["loan_concentration"], False)
+
+component_cols = ["z_capital", "z_asset_quality", "z_management",
+                   "z_earnings", "z_liquidity", "z_sensitivity"]
+camel["composite_z"] = camel[component_cols].mean(axis=1)
+
+camel["composite_score_0_100"] = (
+    (camel["composite_z"] - camel["composite_z"].min())
+    / (camel["composite_z"].max() - camel["composite_z"].min()) * 100
+).round(1)
+
+camel["proxy_rating_1_5"] = pd.qcut(camel["composite_z"], q=5, labels=[5, 4, 3, 2, 1]).astype(int)
+
+camel[["NAME", "composite_score_0_100", "proxy_rating_1_5", "failed"]] \
+    .sort_values("composite_score_0_100").head(10)</code></pre>
+    </div>
+  </section>
+
+  <!-- STEP 6 -->
+  <section id="step-6">
+    <div class="section-head"><span class="section-num">06</span><h2>EDA</h2></div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[6]:</span><h3>Look at the data before trusting it</h3></div>
+      <p class="cell-note">Six component distributions, then the one chart that matters most: does the composite score actually separate failed banks from healthy ones?</p>
+      <pre class="code-block"><code class="language-python">fig, axes = plt.subplots(2, 3, figsize=(15, 8))
+comp_display = {
+    "tier1_ratio": "Tier 1 Capital Ratio (%)", "npl_ratio": "NPL Ratio (%)",
+    "efficiency_ratio": "Efficiency Ratio (%)", "roa": "ROA (%)",
+    "loan_deposit_ratio": "Loan / Deposit Ratio (%)", "loan_concentration": "Loan Concentration (%)",
+}
+for ax, (col, label) in zip(axes.ravel(), comp_display.items()):
+    finite_vals = camel[col].replace([np.inf, -np.inf], np.nan).dropna()  # a bank with 0 deposits -> inf
+    ax.hist(finite_vals, bins=30, color="#2b6cb0", alpha=0.85)
+    ax.set_title(label, fontsize=10)
+plt.tight_layout()
+plt.show()
+
+fig, ax = plt.subplots(figsize=(8, 5))
+for flag, label, color in [(0, "Not failed", "#2b6cb0"), (1, "Failed", "#c53030")]:
+    subset = camel.loc[camel["failed"] == flag, "composite_score_0_100"]
+    ax.hist(subset, bins=25, alpha=0.6, label=f"{label} (n={len(subset)})", color=color, density=True)
+ax.set_xlabel("Composite CAMEL score (0-100, higher = healthier)")
+ax.legend()
+plt.tight_layout()
+plt.show()</code></pre>
+      <div class="output-note"><span class="tag">watch for</span> the failed-bank histogram sitting further left (lower score) than the healthy one &mdash; that's the proxy score doing its job.</div>
+    </div>
+  </section>
+
+  <!-- STEP 7 -->
+  <section id="step-7">
+    <div class="section-head"><span class="section-num">07</span><h2>Baseline model</h2></div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[7]:</span><h3>Train a classifier on the real failure label</h3></div>
+      <p class="cell-note">We train on <code>failed</code> &mdash; the real, independent label &mdash; not the composite score we just built by hand. Failures are rare, so <code>class_weight="balanced"</code> matters: watch precision/recall/F1 on the <em>failed</em> row, not overall accuracy, which would look great even from a model that never catches a real failure.</p>
+      <pre class="code-block"><code class="language-python">feature_cols = ["tier1_ratio", "npl_ratio", "efficiency_ratio", "roa",
+                "loan_deposit_ratio", "loan_concentration"]
+X = camel[feature_cols].replace([np.inf, -np.inf], np.nan)  # a bank with 0 deposits -> inf ratio
+X = X.fillna(X.median())
+y = camel["failed"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=RNG_SEED, stratify=y
+)
+
+model = RandomForestClassifier(
+    n_estimators=300, max_depth=6, class_weight="balanced", random_state=RNG_SEED
+)
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(classification_report(y_test, y_pred, target_names=["healthy", "failed"]))
+print("Confusion matrix:\n", confusion_matrix(y_test, y_pred))</code></pre>
+      <div class="output-note"><span class="flag risk">imbalance</span><span>on the synthetic sample, failures are ~3% of banks. On <strong>live</strong> FDIC data for one quarter, real failures are far rarer &mdash; often just a handful out of ~4,700 banks &mdash; so a 0.00 precision/recall on the "failed" row is expected here, not a broken model: no classifier can learn a pattern from that few positive examples. That's exactly the class-imbalance problem this step exists to make visible, and exactly why a real deployment pools failures across many quarters instead of one.</span></div>
+    </div>
+  </section>
+
+  <!-- STEP 8 -->
+  <section id="step-8">
+    <div class="section-head"><span class="section-num">08</span><h2>XAI &mdash; explain the model</h2></div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[8]:</span><h3>SHAP: why did the model say what it said?</h3></div>
+      <p class="cell-note">A global bar chart ranks which ratios matter most across every bank; the waterfall plot then explains <em>one specific bank's</em> prediction &mdash; exactly the "show your work" the client-facing agent will need later. If <code>explanation[:, :, 1]</code> errors on your SHAP version, print <code>explanation.shape</code> and index accordingly &mdash; the shape varies slightly by version.</p>
+      <pre class="code-block"><code class="language-python">explainer = shap.TreeExplainer(model)
+explanation = explainer(X_test)   # unified SHAP Explanation object
+
+# Global: which ratios drive the "failed" prediction most, across all test banks?
+shap.summary_plot(explanation[:, :, 1], X_test, plot_type="bar", show=True)
+
+# Local: why did the model say this about ONE specific bank?
+bank_i = 0
+shap.plots.waterfall(explanation[bank_i, :, 1], max_display=6)
+print("This waterfall shows exactly which ratios pushed this bank's failure-risk score up or down.")</code></pre>
+    </div>
+  </section>
+
+  <!-- STEP 9 -->
+  <section id="step-9">
+    <div class="section-head"><span class="section-num">09</span><h2>RAI, model card &amp; export</h2></div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[9]:</span><h3>A quick fairness check, by state</h3></div>
+      <p class="cell-note">Does the model's predicted risk skew by state in a way the actual failure rate doesn't? A real fairness audit goes deeper (charter type, asset size, more groups) &mdash; this is the shape of the check, not the full version.</p>
+      <pre class="code-block"><code class="language-python">camel_test = camel.loc[X_test.index].copy()
+camel_test["predicted_failed"] = y_pred
+
+fairness_check = camel_test.groupby("STALP").agg(
+    n_banks=("CERT", "count"),
+    actual_failure_rate=("failed", "mean"),
+    predicted_failure_rate=("predicted_failed", "mean"),
+).round(3)
+print(fairness_check)</code></pre>
+    </div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[10]:</span><h3>Model card &mdash; write down what this model is and isn't</h3></div>
+      <p class="cell-note">Every model that goes near a real decision needs one of these: what it predicts, what it was trained on, and the caveats that keep it honest.</p>
+      <pre class="code-block"><code class="language-python">model_card = {
+    "model": "CAMEL Sentinel baseline (RandomForestClassifier)",
+    "predicts": "Probability of failure, from 6 CAMEL ratios",
+    "training_data": "FDIC BankFind Suite (Institutions + Financials + Failures), single quarter",
+    "proxy_label_caveat": "Real CAMELS ratings are confidential; 'failed' and the composite "
+                           "score are transparent proxies, not regulator-assigned ratings.",
+    "management_caveat": "The efficiency ratio approximates 'Management' - the weakest of the "
+                          "six components, since it has no direct financial-statement equivalent.",
+    "intended_use": "Decision-support / early-warning signal - not a replacement for "
+                     "supervisory judgment.",
+}
+for k, v in model_card.items():
+    print(f"{k}: {v}\n")</code></pre>
+    </div>
+    <div class="cell">
+      <div class="cell-meta"><span class="cell-index">In&nbsp;[11]:</span><h3>Save your trained model</h3></div>
+      <p class="cell-note">This <code>.pkl</code> file is your working artifact &mdash; the thing a backend API could load and serve.</p>
+      <pre class="code-block"><code class="language-python">import pickle
+
+with open("camel_baseline_model.pkl", "wb") as f:
+    pickle.dump(model, f)
+
+print("Saved camel_baseline_model.pkl - this is your exported, working model.")</code></pre>
+    </div>
+  </section>
+
+  <section id="wrapup">
+    <div class="section-head"><h2>What you have now</h2></div>
+    <p class="measure">A notebook that pulls real regulatory data, engineers a documented feature set, trains a model on a real (if rare) outcome, explains its own predictions, and checks itself for bias &mdash; plus a saved <code>.pkl</code> file you could hand to an API today.</p>
+    <div class="callout good">
+      <div class="label">Where this goes next</div>
+      <p>This session covered model preparation only. The fuller CAMEL Sentinel build adds a proper multi-quarter feature store, model tuning, a deeper RAI audit and model card, federated/privacy-preserving training across simulated institutions, a tool-calling agent, and a served backend + UI &mdash; built phase by phase, reviewed at each step. Ask your instructor where to find the running build.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="brand">RR Skillverse &mdash; CAMEL Sentinel</span>
+  <span>Session 1 &middot; Model preparation: data, features, baseline model, XAI, RAI</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script>
+  if (window.Prism) { Prism.highlightAll(); }
+
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('#tracker a'));
+    var sections = links
+      .map(function (a) { return document.querySelector(a.getAttribute('href')); })
+      .filter(Boolean);
+
+    if (!('IntersectionObserver' in window) || sections.length === 0) return;
+
+    var current = null;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var id = '#' + entry.target.id;
+          if (id !== current) {
+            current = id;
+            links.forEach(function (a) {
+              a.classList.toggle('active', a.getAttribute('href') === id);
+            });
+          }
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+
+    sections.forEach(function (s) { observer.observe(s); });
+  })();
+</script>

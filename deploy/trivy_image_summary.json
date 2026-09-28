@@ -1,0 +1,88 @@
+{
+ "scanned": "aquasec/trivy image, HIGH+CRITICAL, 2026-09-28",
+ "rows": [
+  {
+   "Image": "v2.0",
+   "OS (Debian) HIGH": 52,
+   "Python packages HIGH": 9,
+   "CRITICAL": 0,
+   "OS findings with a fix available": 0
+  },
+  {
+   "Image": "v2.1",
+   "OS (Debian) HIGH": 44,
+   "Python packages HIGH": 0,
+   "CRITICAL": 0,
+   "OS findings with a fix available": 0
+  }
+ ],
+ "python_fixed": [
+  {
+   "Package": "jaraco.context",
+   "CVE": "CVE-2026-23949",
+   "Was": "5.3.0",
+   "Fixed in": "6.1.0"
+  },
+  {
+   "Package": "python-multipart",
+   "CVE": "CVE-2024-53981",
+   "Was": "0.0.12",
+   "Fixed in": "0.0.18"
+  },
+  {
+   "Package": "python-multipart",
+   "CVE": "CVE-2026-24486",
+   "Was": "0.0.12",
+   "Fixed in": "0.0.22"
+  },
+  {
+   "Package": "python-multipart",
+   "CVE": "CVE-2026-42561",
+   "Was": "0.0.12",
+   "Fixed in": "0.0.27"
+  },
+  {
+   "Package": "python-multipart",
+   "CVE": "CVE-2026-53539",
+   "Was": "0.0.12",
+   "Fixed in": "0.0.30"
+  },
+  {
+   "Package": "starlette",
+   "CVE": "CVE-2024-47874",
+   "Was": "0.37.2",
+   "Fixed in": "0.40.0"
+  },
+  {
+   "Package": "starlette",
+   "CVE": "CVE-2026-48818",
+   "Was": "0.37.2",
+   "Fixed in": "1.1.0"
+  },
+  {
+   "Package": "starlette",
+   "CVE": "CVE-2026-54283",
+   "Was": "0.37.2",
+   "Fixed in": "1.3.1"
+  },
+  {
+   "Package": "wheel",
+   "CVE": "CVE-2026-24049",
+   "Was": "0.45.1",
+   "Fixed in": "0.46.2"
+  },
+  {
+   "Package": "msgpack (vendored in pip)",
+   "CVE": "GHSA-6v7p-g79w-8964",
+   "Was": "1.1.2",
+   "Fixed in": "pip removed from image"
+  },
+  {
+   "Package": "setuptools (vendored in pip)",
+   "CVE": "CVE-2025-47273",
+   "Was": "70.3.0",
+   "Fixed in": "pip removed from image"
+  }
+ ],
+ "note": "v2.1: every Python-package finding fixed; 8 OS findings removed with curl. Remaining OS findings (util-linux, systemd libs, ncurses, acl) have no Debian fix published yet."
+}

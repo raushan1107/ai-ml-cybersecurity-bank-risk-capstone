@@ -1,0 +1,155 @@
+"""Roadmap content — stages 7–9. Schema: see roadmap_content/__init__.py."""
+
+STAGES = [
+    {
+        "n": "7", "name": "Federated & Privacy-Preserving ML", "track": "Trust & Privacy", "icon": "🔒",
+        "tagline": "Learn from data you are not allowed to collect in one place.",
+        "handoff": "Privacy techniques carry into multimodal and graph data, which are often the most personal of all.",
+        "topics": [
+            {
+                "id": "fedavg", "name": "Federated averaging (FedAvg)",
+                "oneliner": "Each data owner trains locally and shares only model updates; a server averages them into a global model.",
+                "real_world": [
+                    ["Google Gboard", "trains next-word prediction with federated learning on phones (McMahan et al., 2017)."],
+                    ["Cross-bank fraud", "Swift has announced work with Google Cloud to test federated learning for detecting fraud across banks without pooling data."],
+                ],
+                "analogy": "Teachers in different schools each mark practice exams, then share only their grading notes — never the students' papers.",
+                "math": "w_{t+1} = Σₖ (nₖ / n) · wₖ^{t+1}   (weighted by each client's data size)",
+                "code": "def fedavg(client_weights, client_sizes):\n    n = sum(client_sizes)\n    return sum(w * (s / n) for w, s in zip(client_weights, client_sizes))",
+                "in_project": "src/camel_sentinel/federated/simulation.py — states act as data owners training a shared linear model.",
+                "security": "Updates can still leak data or be malicious — hence DP and Byzantine-robust aggregation.",
+            },
+            {
+                "id": "dp", "name": "Differential privacy (DP)",
+                "oneliner": "Add calibrated noise so that the output barely changes whether or not any one person's data is included.",
+                "real_world": [
+                    ["US Census 2020", "published statistics protected with differential privacy."],
+                    ["Apple", "uses local differential privacy to learn popular emoji and QuickType words without seeing individual users' typing."],
+                ],
+                "analogy": "A crowd photo blurred just enough that nobody can be identified, while the crowd size is still clear.",
+                "math": "ε-DP: P[M(D) ∈ S] ≤ e^ε · P[M(D′) ∈ S]\nGaussian mechanism: clip ‖g‖ ≤ C, add N(0, σ²C²)",
+                "code": "g = g / max(1, np.linalg.norm(g) / C)          # clip\ng_noisy = g + np.random.normal(0, sigma * C, g.shape)",
+                "in_project": "The federated simulation clips client updates and adds Gaussian noise (a mechanism demo, not a formal ε certificate).",
+                "security": "Defends against membership inference and training-data reconstruction.",
+            },
+            {
+                "id": "byzantine", "name": "Byzantine-robust aggregation",
+                "oneliner": "Aggregate client updates so that a few malicious or broken clients cannot steer the global model.",
+                "real_world": [
+                    ["Krum (Blanchard et al., 2017)", "and coordinate-wise median / trimmed mean (Yin et al., 2018) are the standard robust aggregators."],
+                    ["Consortium learning", "banks training together must assume some participant could be compromised."],
+                ],
+                "analogy": "Judging a competition by dropping the highest and lowest scores before averaging.",
+                "math": "trimmed mean: sort each coordinate, drop top/bottom β fraction, average the rest\nmedian: w = median(w₁…w_K) per coordinate",
+                "code": "import numpy as np\nfrom scipy.stats import trim_mean\nglobal_w = trim_mean(np.stack(client_updates), proportiontocut=0.1, axis=0)",
+                "in_project": "Stretch goal: the simulation uses plain FedAvg with clipping.",
+                "security": "The federated version of data poisoning (ATLAS AML.T0020).",
+            },
+        ],
+    },
+    {
+        "n": "8", "name": "Multimodal AI", "track": "Data & Models", "icon": "🎥",
+        "tagline": "Beyond text: speech, images, documents and video in one model.",
+        "handoff": "Multimodal inputs (like voice) widen the attack surface — deepfakes are covered in AI Cybersecurity.",
+        "topics": [
+            {
+                "id": "speech", "name": "Speech AI (STT / TTS)",
+                "oneliner": "Speech-to-text turns audio into words; text-to-speech turns words into natural voice.",
+                "real_world": [
+                    ["Gemini Live", "holds real-time spoken conversations."],
+                    ["OpenAI Whisper (2022)", "an open speech-recognition model trained on 680,000 hours of audio."],
+                ],
+                "analogy": "A simultaneous interpreter: listen, understand, speak back.",
+                "math": "log-mel spectrogram → encoder → decoder: P(text | audio) = Π P(wₜ | w<ₜ, audio)",
+                "code": "import azure.cognitiveservices.speech as speechsdk\ncfg = speechsdk.SpeechConfig(subscription=key, region=region)\ntext = speechsdk.SpeechRecognizer(speech_config=cfg).recognize_once().text",
+                "in_project": "Voice mode on the 💬 Chat Assistant page (src/camel_sentinel/chat/speech.py, Azure Speech).",
+                "security": "Voice is not identity — cloned voices can pass (AI Security Lab → Deepfake voice).",
+            },
+            {
+                "id": "vlm", "name": "Vision-language models",
+                "oneliner": "Models that jointly understand images and text: describe, answer questions about, or reason over pictures.",
+                "real_world": [
+                    ["Gemini", "was designed to be natively multimodal across text, images, audio and video."],
+                    ["Circle to Search (Android)", "circle anything on screen to search for it visually."],
+                    ["Google Lens", "identifies objects, translates signs and solves homework from photos."],
+                ],
+                "analogy": "A colleague who can look at a chart and talk you through it.",
+                "math": "image patches → vision encoder → tokens; LLM attends over [image tokens ; text tokens]",
+                "code": "resp = client.chat.completions.create(model=deployment, messages=[{'role': 'user', 'content': [\n  {'type': 'text', 'text': 'What does this chart show?'},\n  {'type': 'image_url', 'image_url': {'url': data_url}}]}])",
+                "in_project": "Not used: inputs are numeric ratios.",
+                "security": "Images can carry hidden prompt injections (text rendered in an image) — multimodal injection.",
+            },
+            {
+                "id": "docai", "name": "Document intelligence",
+                "oneliner": "Extract structured fields and tables from PDFs, scans, invoices and forms.",
+                "real_world": [
+                    ["Azure AI Document Intelligence", "and Google Document AI extract fields from invoices, receipts, IDs and bank statements."],
+                    ["KYC onboarding", "banks automate identity-document and statement processing."],
+                ],
+                "analogy": "A clerk who reads every form and types the important boxes into a spreadsheet — instantly.",
+                "math": "OCR text + layout (bounding boxes) → key-value / table extraction model",
+                "code": "from azure.ai.documentintelligence import DocumentIntelligenceClient\npoller = client.begin_analyze_document('prebuilt-invoice', body=pdf_bytes)\nfields = poller.result().documents[0].fields",
+                "in_project": "Not used; a natural extension would read call-report PDFs directly.",
+                "security": "Forged documents and embedded instructions in PDFs are both attack paths.",
+            },
+        ],
+    },
+    {
+        "n": "9", "name": "Graph Neural Networks", "track": "Data & Models", "icon": "🕸️",
+        "tagline": "Learn from relationships, not just rows: who is connected to whom.",
+        "handoff": "Graph models go to production alongside the tabular model in stage 10.",
+        "topics": [
+            {
+                "id": "message_passing", "name": "Message passing & GraphSAGE",
+                "oneliner": "Each node updates its representation by aggregating its neighbours' — information flows along edges.",
+                "real_world": [
+                    ["Pinterest PinSage (2018)", "a GraphSAGE-based recommender over 3 billion nodes."],
+                    ["Google Maps (with DeepMind, 2020)", "GNNs improved ETA accuracy by up to 50% in some cities."],
+                ],
+                "analogy": "Your reputation is partly the company you keep.",
+                "math": "h_v^{(k)} = σ(W · [h_v^{(k−1)} ‖ mean_{u∈N(v)} h_u^{(k−1)}])",
+                "code": "from torch_geometric.nn import SAGEConv\nconv = SAGEConv((-1, -1), 64)\nh = conv(x, edge_index).relu()",
+                "in_project": "src/camel_sentinel/gnn/model.py — heterogeneous GraphSAGE over customers, accounts, transactions, merchants, devices.",
+                "security": "Adding fake edges or nodes can manipulate predictions (graph adversarial attacks).",
+            },
+            {
+                "id": "fraud_rings", "name": "Fraud-ring detection",
+                "oneliner": "Find groups of accounts that share devices, merchants or money flows — patterns invisible row by row.",
+                "real_world": [
+                    ["AWS", "publishes a reference solution for fraud detection with graph neural networks (Deep Graph Library)."],
+                    ["Card networks and payment providers", "use graph analytics to connect mule accounts and shared devices."],
+                ],
+                "analogy": "One suspicious person is hard to judge; five people sharing one phone and one address is a pattern.",
+                "math": "score(tx) = σ(MLP(h_tx ‖ h_account ‖ h_merchant ‖ h_device))",
+                "code": "from camel_sentinel.gnn.detector import score_transaction\nscore_transaction(tx_features)['fraud_probability']",
+                "in_project": "🕸️ Fraud Detection page: synthetic ring-fraud patterns the GNN catches and tabular baselines miss.",
+                "security": "Fraudsters adapt; graph models need retraining and drift monitoring.",
+            },
+            {
+                "id": "kg_graphrag", "name": "Knowledge graphs & GraphRAG",
+                "oneliner": "Store facts as entities and relations, and retrieve along the graph to ground LLM answers.",
+                "real_world": [
+                    ["Google Knowledge Graph (2012)", "powers the knowledge panels in Google Search."],
+                    ["Microsoft GraphRAG (2024)", "open-sourced; builds a graph from documents for better whole-corpus answers."],
+                ],
+                "analogy": "A detective's wall of photos connected by string.",
+                "math": "triple (head, relation, tail); TransE: h + r ≈ t",
+                "code": "import networkx as nx\nG = nx.DiGraph()\nG.add_edge('Bank A', 'Holding Co X', relation='owned_by')\nlist(G.successors('Bank A'))",
+                "in_project": "Not used; bank ownership graphs would be a natural extension.",
+                "security": "Poisoned graph facts propagate to every answer that traverses them.",
+            },
+            {
+                "id": "gnn_ids", "name": "GNN intrusion detection",
+                "oneliner": "Model network flows as a graph of hosts and connections to spot attacks like lateral movement.",
+                "real_world": [
+                    ["Research (E-GraphSAGE, 2022)", "edge-level GNNs detect malicious flows in network intrusion datasets."],
+                ],
+                "analogy": "Watching who talks to whom in an office, not just what each person says.",
+                "math": "edge classification: ŷ_uv = σ(MLP(h_u ‖ h_v ‖ e_uv))",
+                "code": "# nodes = IPs, edges = flows with features (bytes, duration, port)\nlogits = edge_mlp(torch.cat([h[src], h[dst], edge_attr], dim=-1))",
+                "in_project": "The AI SOC lab uses per-entity behaviour + IsolationForest; a graph of API keys ↔ IPs is the next step.",
+                "security": "Directly a defensive technique for the SOC.",
+            },
+        ],
+    },
+]

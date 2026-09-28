@@ -1,0 +1,8 @@
+* text=auto
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.parquet binary
+*.joblib binary
+*.pkl binary
+*.pt binary
+*.png binary

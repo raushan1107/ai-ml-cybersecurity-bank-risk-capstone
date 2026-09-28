@@ -1,0 +1,14 @@
+# Streamlit settings for CAMEL Sentinel (read from the project root / container /app).
+[theme]
+primaryColor = "#2a78d6"          # validated palette blue (replaces Streamlit's default red)
+
+[client]
+toolbarMode = "minimal"           # hide developer menu items for visitors
+showErrorDetails = "type"         # security (docs/09): never show stack traces to visitors
+
+[server]
+maxUploadSize = 10                # MB — matches the API's audio upload limit
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false

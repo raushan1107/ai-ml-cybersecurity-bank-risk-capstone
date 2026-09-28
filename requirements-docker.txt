@@ -1,0 +1,31 @@
+# Runtime-only dependencies for the Docker image — see docs/06_deployment_containerization.md.
+# Pinned to the exact versions the models were trained and tested with, so the image
+# behaves identically on every machine. Notebook-only packages (jupyter, xgboost,
+# imbalanced-learn) are deliberately left out to keep the image smaller.
+# torch / torch-geometric are installed separately in the Dockerfile (CPU-only wheel).
+
+pandas==2.3.3
+numpy==1.26.4
+scipy==1.15.3
+pyarrow==24.0.0
+requests==2.31.0
+matplotlib==3.10.9
+scikit-learn==1.7.2        # MUST match the version the .joblib models were pickled with
+joblib==1.5.3
+lightgbm==4.7.0            # gnn_baselines.pkl contains a LightGBM model
+shap==0.49.1
+lime==0.2.0.1
+
+fastapi==0.141.1          # upgraded 2026-09-28: Trivy HIGH CVEs in starlette
+starlette==1.7.0           # CVE-2024-47874, CVE-2026-48818, CVE-2026-54283 fixed
+uvicorn==0.54.0
+pydantic==2.13.5
+python-multipart==0.0.32   # FastAPI file uploads; 4 HIGH CVEs fixed vs 0.0.12
+streamlit==1.56.0
+
+openai==1.44.1
+httpx==0.27.2
+python-dotenv==1.0.1
+azure-cognitiveservices-speech==1.47.0
+
+networkx==3.4.2

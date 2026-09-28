@@ -1,0 +1,46 @@
+# --- Byte-compiled / notebook checkpoints ---
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- Secrets (FDIC API key, future service credentials) ---
+.env
+*.env.local
+
+# --- Data: raw/interim/processed pulls are reproducible from the FDIC API
+#     or the synthetic fallback (see src/camel_sentinel/data/fdic_client.py) —
+#     we version the CODE that produces them, not the data itself. ---
+data/raw/*
+data/interim/*
+data/processed/*
+!data/processed/camel_panel.parquet
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+
+# --- Generated plots and exported model artifacts: regenerate by re-running
+#     the relevant notebook/src module, don't commit binaries. ---
+notebooks/*.png
+reports/**/*.png
+models/*.onnx
+!models/.gitkeep
+# The trained models (~3 MB) ARE published so a fresh clone runs without retraining.
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+
+# --- Local tooling, backups and stray files (never publish) ---
+.claude/
+Project-versions/
+*.zip
+=*
+*_err.txt
+*_out.txt
+.streamlit/secrets.toml

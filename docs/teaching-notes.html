@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CAMEL Sentinel Teaching Script | AI/ML Handbook Modules 1–9</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #111a2e;
+        --panel-2: #182746;
+        --primary: #7dd3fc;
+        --accent: #c084fc;
+        --success: #86efac;
+        --warning: #fbbf24;
+        --danger: #fca5a5;
+        --text: #e5eefb;
+        --muted: #a9bad8;
+        --border: rgba(255,255,255,0.08);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: linear-gradient(180deg, #0b1020 0%, #111827 100%);
+        color: var(--text);
+        line-height: 1.7;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 24px 80px;
+      }
+
+      .hero {
+        background: linear-gradient(135deg, rgba(125,211,252,0.15), rgba(192,132,252,0.12));
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      }
+
+      .eyebrow {
+        display: inline-block;
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      h1, h2, h3 {
+        margin-top: 0;
+        line-height: 1.2;
+      }
+
+      h1 {
+        font-size: clamp(2.2rem, 4vw, 4rem);
+        margin: 18px 0 14px;
+      }
+
+      .lead {
+        color: var(--muted);
+        font-size: 1.08rem;
+        max-width: 900px;
+      }
+
+      .story-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+        gap: 18px;
+        margin-top: 28px;
+      }
+
+      .card {
+        background: rgba(17, 26, 46, 0.9);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+      }
+
+      .card h3 {
+        font-size: 1.08rem;
+        margin-bottom: 10px;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(125,211,252,0.12);
+        color: var(--primary);
+        border: 1px solid rgba(125,211,252,0.2);
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .glossary-shell {
+        display: grid;
+        grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+      }
+
+      .glossary-nav {
+        background: rgba(17, 26, 46, 0.9);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        max-height: 720px;
+        overflow: auto;
+      }
+
+      .glossary-nav a {
+        display: block;
+        width: 100%;
+        text-align: left;
+        text-decoration: none;
+        color: var(--text);
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .glossary-nav a:hover,
+      .glossary-nav a.active {
+        background: rgba(125, 211, 252, 0.08);
+        border-color: rgba(125, 211, 252, 0.2);
+        color: var(--primary);
+      }
+
+      .glossary-panel {
+        background: rgba(17, 26, 46, 0.9);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px 22px;
+        min-height: 220px;
+      }
+
+      .glossary-panel h3 {
+        margin-bottom: 8px;
+        color: var(--primary);
+      }
+
+      .glossary-panel .meta {
+        color: var(--muted);
+        font-size: 0.82rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      .glossary-panel p {
+        margin: 0 0 12px;
+      }
+
+      .glossary-script-block {
+        display: grid;
+        gap: 14px;
+      }
+
+      .glossary-script-block h4 {
+        margin: 0;
+        color: var(--primary);
+        font-size: 0.92rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .glossary-loading {
+        color: var(--muted);
+      }
+
+      .module {
+        margin-top: 34px;
+        padding: 24px 24px 12px;
+        background: rgba(17, 26, 46, 0.78);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+      }
+
+      .module-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+
+      .module-title {
+        font-size: clamp(1.5rem, 2vw, 2rem);
+        margin: 0;
+      }
+
+      .module-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1.2fr 1fr;
+        gap: 18px;
+        margin-top: 14px;
+      }
+
+      .pill {
+        display: inline-block;
+        background: rgba(134,239,172,0.12);
+        border: 1px solid rgba(134,239,172,0.2);
+        color: var(--success);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.8rem;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      li { margin: 8px 0; }
+
+      code {
+        font-family: "Consolas", monospace;
+        color: #e2e8f0;
+        background: rgba(148,163,184,0.12);
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+
+      .project-map {
+        margin-top: 42px;
+      }
+
+      .project-map .card {
+        padding: 24px;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .step {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 18px;
+        background: rgba(24,39,70,0.8);
+      }
+
+      .step strong {
+        color: var(--primary);
+      }
+
+      .footer-note {
+        margin-top: 40px;
+        color: var(--muted);
+        font-size: 0.96rem;
+      }
+
+      @media (max-width: 860px) {
+        .glossary-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .module-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="hero">
+        <div class="eyebrow">RR Skillverse — Free Learning Handbook</div>
+        <h1>AI &amp; Machine Learning with Cybersecurity</h1>
+        <p class="lead">
+          This teaching script turns the handbook into a real, progressive learning journey built around the
+          <strong>CAMEL Sentinel</strong> project: a bank risk and financial health assessment system that uses
+          data analysis, ML, XAI, RAI, agentic AI, and privacy-preserving learning in one connected flow.
+        </p>
+
+        <div class="story-grid">
+          <div class="card">
+            <div class="badge">Project idea</div>
+            <h3>Predict bank risk from financial ratios</h3>
+            <p>
+              We analyze public bank financial data, build CAMEL-style features, predict failure risk, explain the decision,
+              and wrap the model in a conversational AI layer.
+            </p>
+          </div>
+          <div class="card">
+            <div class="badge">Why this is real</div>
+            <h3>Implementation is grounded in this repo</h3>
+            <p>
+              The project includes feature engineering, model training, SHAP explanations, federated simulation, a FastAPI backend,
+              and a Streamlit/voice chat front end.
+            </p>
+          </div>
+          <div class="card">
+            <div class="badge">What we teach</div>
+            <h3>Modules 1–9 with production vision</h3>
+            <p>
+              Each module is explained as a building block, mapped to the actual implementation in code and extended with future-ready ideas.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <section class="card" style="margin-top: 28px;">
+        <div class="eyebrow">Glossary explorer</div>
+        <h2 style="margin-top: 10px;">Course concepts explained in plain language</h2>
+        <p class="lead" style="margin-bottom: 18px;">
+          Click any topic to understand what it is, why it matters, and how it connects to this course and project.
+        </p>
+
+        <div class="glossary-shell">
+          <aside class="glossary-nav" id="glossaryNav"></aside>
+          <div class="glossary-panel" id="glossaryPanel">
+            <div class="glossary-loading">Select a concept to view its definition.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-map">
+        <div class="card">
+          <div class="eyebrow">Project story</div>
+          <h2>From raw financial data to an explainable, production-ready AI system</h2>
+          <p>
+            This project is not just a machine learning demo. It follows a real workflow: collect data, clean and engineer features,
+            train a model, explain predictions, audit for fairness, protect privacy, expose the model through APIs, and enable an
+            AI agent to answer user questions with evidence-backed responses. That is exactly how modern AI systems are built.
+          </p>
+          <div class="timeline">
+            <div class="step"><strong>Step 1</strong><br />Gather FDIC bank data and feature definitions</div>
+            <div class="step"><strong>Step 2</strong><br />Build CAMEL ratios and proxy labels</div>
+            <div class="step"><strong>Step 3</strong><br />Train and evaluate failure-risk models</div>
+            <div class="step"><strong>Step 4</strong><br />Explain and audit the model</div>
+            <div class="step"><strong>Step 5</strong><br />Build a federated privacy-preserving simulation</div>
+            <div class="step"><strong>Step 6</strong><br />Expose it through agent + chat + APIs</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module">
+        <div class="module-header">
+          <h2 class="module-title">Module 1 — Data Science + Financial Data Analysis</h2>
+          <span class="pill">Core foundation</span>
+        </div>
+        <div class="module-grid">
+          <div>
+            <h3>Concept</h3>
+            <ul>
+              <li>Understand the business problem before writing code.</li>
+              <li>Perform EDA on financial and risk data.</li>
+              <li>Detect missing values, outliers, class imbalance, and time drift.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Project implementation</h3>
+            <ul>
+              <li>We use FDIC institutional and financial data to build CAMEL-style ratios.</li>
+              <li>Features such as <code>tier1_ratio</code>, <code>npl_ratio</code>, <code>roa</code>, and <code>loan_deposit_ratio</code> are engineered into a coherent financial-risk structure.</li>
+              <li>We also compare healthy and failed banks using a proxy label: failure within N quarters.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Best teaching takeaway</h3>
+            <p>
+              A good AI project starts from the data domain. In this case, the domain is financial health, not generic tabular ML.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="module">
+        <div class="module-header">
+          <h2 class="module-title">Module 2 — Deep Neural Networks and AI Foundations</h2>
+          <span class="pill">Why we did not force a deep network</span>
+        </div>
+        <div class="module-grid">
+          <div>
+            <h3>Concept</h3>
+            <ul>
+              <li>Perceptrons, feedforward networks, optimization, activation functions.</li>
+              <li>Use ANNs when patterns are nonlinear and data is large enough.</li>
+              <li>Study adversarial examples and robustness.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Project implementation</h3>
+            <ul>
+              <li>The main CAMEL data is structured tabular data, so tree-based models are often more interpretable and more dependable.</li>
+              <li>The project currently uses a tuned <code>HistGradientBoostingClassifier</code> and a baseline random forest.</li>
+              <li>There is still room to add an MLP benchmark and adversarial robustness checks on bank ratios.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Future extension</h3>
+            <p>
+              Add a small neural-network baseline to compare predictive performance, then study how small perturbations to ratios affect the final risk class.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="module">
+        <div class="module-header">
+          <h2 class="module-title">Module 3 — NLP + Financial Text AI</h2>
+          <span class="pill">Security and language layer</span>
+        </div>
+        <div class="module-grid">
+          <div>
+            <h3>Concept</h3>
+            <ul>
+              <li>Text representation, embeddings, NER, sentiment, and prompt safety.</li>
+              <li>PII protection and prompt injection defense.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Project implementation</h3>
+            <ul>
+              <li>The main model is numeric, not NLP-heavy.</li>
+              <li>However, the chat agent accepts free-form user messages, so we must protect the system from prompt injection and sanitize any financial data.</li>
+              <li>The chat workflow is structured so the LLM never creates a risk decision itself; it only interprets the ML tool output.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Real-world lesson</h3>
+            <p>
+              Even a numeric model can still be exposed through an LLM. The real security risk is at the boundary between natural language and the model tool call.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="module">
+        <div class="module-header">
+          <h2 class="module-title">Module 4 — Generative AI, LLMs &amp; RLHF</h2>
+          <span class="pill">Explanation generation</span>
+        </div>
+        <div class="module-grid">
+          <div>
+            <h3>Concept</h3>
+            <ul>
+              <li>Transformers and instruct-tuned LLMs generate context-rich explanations.</li>
+              <li>Alignment and guardrails keep the AI on-task.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Project implementation</h3>
+            <ul>
+              <li>The project uses Azure OpenAI to turn model output into plain-language answers.</li>
+              <li>The LLM explains the risk result using SHAP contributions instead of inventing a rating.</li>
+              <li>The system prompt is designed to prevent hallucinated regulatory statements or unsupported judgments.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Teaching angle</h3>
+            <p>
+              This is a perfect example of using LLMs not for prediction itself, but for explanation and conversation around the prediction.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="module">
+        <div class="module-header">
+          <h2 class="module-title">Module 5 — RAG, LangChain &amp; AI Agents</h2>
+          <span class="pill">Tool-calling agent</span>
+        </div>
+        <div class="module-grid">
+          <div>
+            <h3>Concept</h3>
+            <ul>
+              <li>Use tools, not free-form reasoning, to access real functions.</li>
+              <li>Keep the action space small and controlled.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Project implementation</h3>
+            <ul>
+              <li>The <code>score_bank</code> tool is allow-listed and returns probability, tier, SHAP contributions, LIME output, and counterfactuals.</li>
+              <li>The chat agent in <code>src/camel_sentinel/chat/agent.py</code> calls the tool, receives the result, and then produces a natural-language answer.</li>
+              <li>The backend exposes this as a service layer, making the system extensible beyond a notebook demo.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Why it matters</h3>
+            <p>
+              Real AI systems should rely on tools and verification, not raw model memory. This reduces hallucination and unsafe action-taking.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="module">
+        <div class="module-header">
+          <h2 class="module-title">Module 6 — Explainable &amp; Responsible AI</h2>
+          <span class="pill">Trust, fairness, and governance</span>
+        </div>
+        <div class="module-grid">
+          <div>
+            <h3>Concept</h3>
+            <ul>
+              <li>Explain why the model makes a decision.</li>
+              <li>Audit fairness, risk, bias, and model governance.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Project implementation</h3>
+            <ul>
+              <li>SHAP is used to explain feature contributions.</li>
+              <li>LIME provides a local surrogate view.</li>
+              <li>Counterfactual explanations show what change would move a bank from risky to lower risk.</li>
+              <li>Responsible AI checks include subgroup audit for size and region.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Real lesson</h3>
+            <p>
+              A model without explanation is hard to trust in regulated environments. In banking and healthcare, interpretability is not optional.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="module">
+        <div class="module-header">
+          <h2 class="module-title">Module 7 — Federated &amp; Privacy-Preserving ML</h2>
+          <span class="pill">Privacy-first learning</span>
+        </div>
+        <div class="module-grid">
+          <div>
+            <h3>Concept</h3>
+            <ul>
+              <li>Train across decentralized data owners without sharing raw data.</li>
+              <li>Use FedAvg, clipping, and noisy updates for privacy-aware coordination.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Project implementation</h3>
+            <ul>
+              <li>The project simulates multiple data silos by state and runs a federated learning loop.</li>
+              <li>Updates are clipped and perturbed before aggregation to make the training more privacy-aware.</li>
+              <li>This teaches the idea even if the final system is still centralized for an MVP.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Why this matters</h3>
+            <p>
+              This matches real institutional constraints: institutions rarely share sensitive raw financial records with each other.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="module">
+        <div class="module-header">
+          <h2 class="module-title">Module 8 — Multimodal AI</h2>
+          <span class="pill">Next-level intelligent interfaces</span>
+        </div>
+        <div class="module-grid">
+          <div>
+            <h3>Concept</h3>
+            <ul>
+              <li>Combine text, image, audio, and structured data in one system.</li>
+              <li>Production interfaces increasingly mix modalities.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Project implementation</h3>
+            <ul>
+              <li>The project already includes voice input and speech synthesis.</li>
+              <li>Combine that with uploaded documents, bank statements, or financial reports for richer risk-assessment workflows.</li>
+              <li>Future versions could process PDF annual reports alongside ratio-based scoring.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Extension idea</h3>
+            <p>
+              Add OCR and document summarization for annual reports, compliance notices, or audit summaries.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="module">
+        <div class="module-header">
+          <h2 class="module-title">Module 9 — MLOps, Deployment &amp; Production Systems</h2>
+          <span class="pill">Turn research into a product</span>
+        </div>
+        <div class="module-grid">
+          <div>
+            <h3>Concept</h3>
+            <ul>
+              <li>Model versioning, monitoring, CI/CD, retraining, and deployment pipelines.</li>
+              <li>Production-grade systems need guardrails, reproducibility, and observability.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Project implementation</h3>
+            <ul>
+              <li>The backend and Streamlit UI provide a working service layer and interaction surface.</li>
+              <li>The model is serialized and loaded repeatedly, which is the right first step toward real MLOps.</li>
+              <li>The next move is to add cloud deployment, automated tests, model registry, tracking, and drift monitoring.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Production-ready checklist</h3>
+            <p>
+              Add authentication, monitoring, retraining jobs, versioned datasets, alerts, and model governance before exposing the service to real users.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-map">
+        <div class="card">
+          <div class="eyebrow">Real repo mapping</div>
+          <h2>How this project connects to the implementation</h2>
+          <ul>
+            <li><code>src/camel_sentinel/features/camel_ratios.py</code> — financial ratio engineering and scoring logic</li>
+            <li><code>src/camel_sentinel/models/baseline.py</code> — model structure and feature definition</li>
+            <li><code>src/camel_sentinel/xai/explain.py</code> — SHAP and LIME explanation logic</li>
+            <li><code>src/camel_sentinel/federated/simulation.py</code> — privacy-preserving learning demo</li>
+            <li><code>src/camel_sentinel/chat/agent.py</code> — agentic LLM call flow</li>
+            <li><code>src/camel_sentinel/agent/tools.py</code> — allow-listed ML tool access</li>
+            <li><code>backend/main.py</code> — API service and model serving</li>
+            <li><code>frontend/app.py</code> and <code>frontend/pages/2_💬_Chat_Assistant.py</code> — end-user interaction</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="project-map">
+        <div class="card">
+          <div class="eyebrow">Production extension roadmap</div>
+          <h2>What we can build next from the handbook learnings</h2>
+          <ul>
+            <li>Model monitoring with drift detection and freshness checks</li>
+            <li>Advanced fairness and bias mitigation dashboards</li>
+            <li>Document understanding for annual reports and audited financial statements</li>
+            <li>Prompt injection and LLM guardrail testing for the chatbot</li>
+            <li>Real federated deployment using Flower or secure aggregation</li>
+            <li>Business alerts for banks entering high-risk thresholds</li>
+            <li>Deployment into Azure, Docker, or a containerized API service</li>
+          </ul>
+        </div>
+      </section>
+
+      <p class="footer-note">
+        This script is meant to teach the concept first and then connect it to the project. The central idea is simple:
+        every AI module becomes more useful when it solves a real business problem and moves toward a production-grade system.
+      </p>
+    </div>
+
+    <script>
+      const glossary = [
+        { key: 'NumPy Broadcasting', detail: 'NumPy broadcasting allows arrays of different shapes to be used together in arithmetic operations when their dimensions are compatible. In data science, it speeds up vectorized work and helps process large datasets efficiently without writing slow Python loops.' },
+        { key: 'Vectorization', detail: 'Vectorization means performing computation on entire arrays or columns at once instead of one value at a time. This reduces runtime, improves clarity, and is a core idea in NumPy, pandas, and scientific ML workflows.' },
+        { key: 'Pandas Multi-index', detail: 'A MultiIndex is a pandas index with multiple levels, such as bank and quarter. It helps organize hierarchical data and makes grouped analysis, transforms, and time-series views easier to manage.' },
+        { key: 'GroupBy', detail: 'GroupBy splits a DataFrame by a key and computes operations within each group. It is commonly used for aggregations like average risk by state, quarterly loan growth by bank, or default rates by region.' },
+        { key: 'Resample', detail: 'Resampling changes the time frequency of data such as daily to monthly or quarterly. It is useful when analyzing financial trends over time and comparing performance across reporting windows.' },
+        { key: 'Feature Engineering', detail: 'Feature engineering is the act of transforming raw data into input features that help a model learn patterns. In finance, this often means computing ratios, trend signals, and derived indicators from raw balance-sheet and income-statement variables.' },
+        { key: 'Regression', detail: 'Regression predicts a continuous numeric value, such as a credit score or expected return. In banking, it can be used to estimate a continuous risk or health measure before converting it into a class or rating bucket.' },
+        { key: 'Ridge Regression', detail: 'Ridge adds a penalty to large coefficients to reduce overfitting. It is useful when many input variables are correlated and we want a stable model.' },
+        { key: 'Lasso Regression', detail: 'Lasso regression adds a penalty that can shrink some coefficients to zero. It performs variable selection and is helpful when we want a simpler, more interpretable model.' },
+        { key: 'Classification', detail: 'Classification predicts categories such as healthy vs risky or low vs medium vs high risk. It is the standard approach when the target is a discrete label.' },
+        { key: 'SMOTE', detail: 'Synthetic Minority Oversampling Technique creates synthetic samples for minority classes to reduce class imbalance. It is commonly used in fraud, default, and bankruptcy modeling where positive cases are rare.' },
+        { key: 'AUC-ROC', detail: 'Area Under the Receiver Operating Characteristic Curve measures how well a model separates positive and negative classes across thresholds. Higher values indicate better ranking capability.' },
+        { key: 'F1 Score', detail: 'The F1 score balances precision and recall, making it useful when the minority class is important and false positives or false negatives are both costly.' },
+        { key: 'K-Means++', detail: 'K-Means++ is a clustering method that chooses initial cluster centers to reduce poor local minima and improve stability. It groups similar banks or customers based on feature similarity.' },
+        { key: 'DBSCAN', detail: 'DBSCAN groups dense regions of points and marks sparse points as noise. It is good for identifying unusual structure without forcing a fixed number of clusters.' },
+        { key: 'PCA', detail: 'Principal Component Analysis reduces the number of features by projecting data onto directions of highest variance. It helps visualize dimensions and reduce noise in large tabular data.' },
+        { key: 'UMAP', detail: 'UMAP is a nonlinear dimensionality reduction method used for exploratory visualization. It helps reveal clusters and data relationships that are hard to see in high dimensions.' },
+        { key: 'Data Poisoning', detail: 'Data poisoning is the deliberate corruption of training data to mislead the model. This can include manipulated labels, inserted malicious points, or hidden trigger patterns meant to bias predictions.' },
+        { key: 'Label Flipping', detail: 'Label flipping changes training labels to mislead the model. In financial systems, this could cause a risky client to be treated as safe or vice versa.' },
+        { key: 'Backdoor Injection', detail: 'Backdoor injection adds subtle patterns to inputs so the model learns a hidden trigger that causes incorrect outputs when the trigger is present. It is a major adversarial-data risk in ML systems.' },
+        { key: 'Anomaly Detection', detail: 'Anomaly detection identifies observations that are very different from the normal distribution. It is often used as a first line of defense for fraud, data corruption, and poisoned samples.' },
+        { key: 'Perceptron', detail: 'A perceptron is the simplest neural network unit: it produces an output based on a weighted sum of inputs and an activation function. It is the building block of neural networks.' },
+        { key: 'ANN', detail: 'An Artificial Neural Network is a model made of connected neurons arranged in layers. It can learn nonlinear patterns by adjusting weights through training.' },
+        { key: 'ReLU', detail: 'ReLU (Rectified Linear Unit) is a nonlinear activation function that returns zero for negative values and keeps positive values. It helps neural networks learn complex patterns efficiently.' },
+        { key: 'Sigmoid', detail: 'Sigmoid converts a value into a probability-like output between 0 and 1. It is often used in binary classification probabilities.' },
+        { key: 'Softmax', detail: 'Softmax converts multiple scores into probabilities that sum to 1. It is widely used in the output layer of multiclass classifiers.' },
+        { key: 'Forward Propagation', detail: 'Forward propagation passes input data through the network layer by layer to produce a prediction. It is the first half of the training and inference cycle.' },
+        { key: 'Backward Propagation', detail: 'Backward propagation computes gradients of the loss with respect to each parameter by moving backward through the network. This is how the model learns from its mistakes.' },
+        { key: 'Gradient Descent', detail: 'Gradient descent is an optimization algorithm that updates parameters in the direction that reduces loss. It is central to training neural networks and many ML models.' },
+        { key: 'SGD', detail: 'Stochastic Gradient Descent updates parameters using small random batches of data instead of the full dataset. It is faster and works well with large datasets.' },
+        { key: 'Momentum', detail: 'Momentum accelerates optimization by carrying forward previous update directions. This helps models move faster through flat optimization regions.' },
+        { key: 'Adam', detail: 'Adam combines momentum-like behavior with adaptive learning rates for each parameter. It is one of the most popular optimizers for deep learning.' },
+        { key: 'RMSprop', detail: 'RMSprop adjusts the learning rate using a moving average of squared gradients. It helps stabilize training when features vary in scale.' },
+        { key: 'Batch Normalization', detail: 'Batch normalization normalizes activations within mini-batches to stabilize and speed training. It reduces internal covariate shift and often improves convergence.' },
+        { key: 'Dropout', detail: 'Dropout randomly disables neurons during training so the network does not become overly dependent on specific features. It acts as a regularizer.' },
+        { key: 'Convolution', detail: 'Convolution applies learned filters over local regions of data to detect patterns such as edges, shapes, or textures. It is the key operation in CNNs.' },
+        { key: 'Padding', detail: 'Padding adds border values around input data so the output keeps a desired size. It prevents the feature map from shrinking too quickly during convolution.' },
+        { key: 'Strides', detail: 'Strides control how far the filter moves across the input at each step. Larger strides reduce output size and can capture broader patterns.' },
+        { key: 'Pooling', detail: 'Pooling reduces feature-map size by summarizing neighborhoods with operations like max or average. It helps retain important information while reducing dimensionality.' },
+        { key: 'Transfer Learning', detail: 'Transfer learning reuses a model trained on one task for a related task. It is popular in vision and NLP where pre-trained models can be adapted with less data.' },
+        { key: 'FGSM', detail: 'Fast Gradient Sign Method generates adversarial examples by pushing inputs in the direction of the gradient. It is a quick way to show how small input changes can fool a neural network.' },
+        { key: 'PGD', detail: 'Projected Gradient Descent is a stronger iterative adversarial attack. It repeatedly perturbs inputs while keeping them within a bounded attack range.' },
+        { key: 'Adversarial Training', detail: 'Adversarial training exposes the model to perturbed examples during training so it learns to be more robust. It is one of the best known defenses against adversarial attacks.' },
+        { key: 'BoW', detail: 'Bag-of-Words represents text as counts of words, ignoring grammar and order. It is simple, fast, and useful for baseline text classification tasks.' },
+        { key: 'TF-IDF', detail: 'Term Frequency-Inverse Document Frequency weights words by how common they are in a document versus the full corpus. It emphasizes informative words and downweights common ones.' },
+        { key: 'Word2Vec', detail: 'Word2Vec learns vector representations of words so that similar words appear near each other in embedding space. It captures semantic similarity rather than simple word counts.' },
+        { key: 'BERT Embeddings', detail: 'BERT embeddings use contextual word vectors that change depending on the surrounding text. They capture deeper meaning than static word embeddings.' },
+        { key: 'SpaCy NER', detail: 'Named Entity Recognition identifies entities such as people, organizations, banks, or monetary values in text. In finance, it helps extract entities from reports and news articles.' },
+        { key: 'Fine-tuning BERT', detail: 'Fine-tuning adapts a pre-trained BERT model to a task like financial entity extraction or sentiment analysis. This usually requires task-specific labeled data.' },
+        { key: 'FinBERT', detail: 'FinBERT is a BERT-based model tailored for financial text. It is often used for sentiment analysis of earnings calls, annual reports, and news headlines.' },
+        { key: 'Event Study', detail: 'An event study measures the effect of an event such as an earnings announcement or a lawsuit on prices or returns over a defined time window.' },
+        { key: 'Aspect-based Sentiment', detail: 'This method extracts sentiment around specific aspects such as profitability, risk, or regulation. It is more precise than a single document-wide sentiment score.' },
+        { key: 'Prompt Injection', detail: 'Prompt injection is the manipulation of an LLM through crafted input that causes it to ignore instructions or perform unsafe actions. It is a major security concern for AI systems.' },
+        { key: 'PII Detection', detail: 'PII detection finds private information such as names, account numbers, or addresses in text. It is important in regulated and compliance-heavy domains.' },
+        { key: 'Presidio', detail: 'Presidio is a library for detecting and anonymizing personal data in text and documents. It is often used to protect user information before it reaches an LLM or analytics tool.' },
+        { key: 'Transformer', detail: 'The transformer is the core architecture behind many modern LLMs. It uses self-attention to process relationships between tokens in parallel and efficiently capture context.' },
+        { key: 'Hugging Face', detail: 'Hugging Face provides a large ecosystem of pre-trained models, tokenizers, and training utilities. It is widely used for NLP, vision, and model fine-tuning.' },
+        { key: 'PEFT', detail: 'Parameter-Efficient Fine-Tuning reduces the number of trainable parameters when adapting a large model. It makes fine-tuning more practical on limited hardware.' },
+        { key: 'LoRA', detail: 'LoRA adds small trainable low-rank adapters to a frozen model instead of retraining everything. It is efficient and widely adopted in local AI workflows.' },
+        { key: 'QLoRA', detail: 'QLoRA compresses the base model and then fine-tunes it with low-rank adapters. It allows large models to be fine-tuned more efficiently on consumer GPUs.' },
+        { key: 'Ollama', detail: 'Ollama lets teams run local LLMs easily and self-host them without a heavy cloud dependency. It is useful for secure or on-premises deployment setups.' },
+        { key: 'SFT', detail: 'Supervised Fine-Tuning trains a base model on labeled examples to adapt it to a task or domain. It is usually the first step in alignment pipelines.' },
+        { key: 'Reward Model', detail: 'A reward model scores responses according to human or task-specific preferences. It is used to align LLM behavior with desired quality and safety.' },
+        { key: 'PPO', detail: 'Proximal Policy Optimization is a reinforcement-learning method used to align model behavior with reward signals. It is a common step in RLHF pipelines.' },
+        { key: 'DPO', detail: 'Direct Preference Optimization trains the model directly on pairwise preference data without requiring a separate reinforcement-learning loop. It is simpler and often more stable than PPO.' },
+        { key: 'LLM Red-Teaming', detail: 'LLM red teaming actively probes a model for jailbreaks, unsafe outputs, prompt injections, and policy bypasses. It helps expose weaknesses before deployment.' },
+        { key: 'Jailbreak', detail: 'A jailbreak is a prompt or exploit that causes the model to ignore system rules or safety filters. It is a major issue in language systems.' },
+        { key: 'Model Extraction', detail: 'Model extraction tries to reconstruct a model’s behavior by querying it repeatedly. It can leak proprietary capabilities or expose sensitive internal logic.' },
+        { key: 'Vector Store', detail: 'A vector store indexes embeddings so that retrieval systems can quickly find relevant content based on semantic similarity. It powers modern RAG systems.' },
+        { key: 'Hybrid Retrieval', detail: 'Hybrid retrieval combines keyword search and dense semantic search to improve recall and precision. It is often stronger than a single search method alone.' },
+        { key: 'BM25', detail: 'BM25 is a classic lexical retrieval algorithm that ranks documents using term frequency and inverse document frequency. It is good for keyword-heavy search.' },
+        { key: 'FAISS', detail: 'FAISS is a library for fast vector similarity search. It is commonly used to retrieve nearest-neighbor embeddings in production RAG pipelines.' },
+        { key: 'RAGAS', detail: 'RAGAS is a framework for evaluating retrieval-augmented generation pipelines based on faithfulness, relevance, and recall. It helps judge whether the system is using good evidence.' },
+        { key: 'ReAct', detail: 'ReAct combines reasoning and acting in a loop where the model decides on a step, calls tools, and updates its plan. It is a common pattern for AI agents.' },
+        { key: 'Tool Calling', detail: 'Tool calling allows an LLM to invoke a function or API with structured input. This is how models can safely fetch data or run computations instead of hallucinating answers.' },
+        { key: 'LangGraph', detail: 'LangGraph is a framework for building stateful, multi-step agent flows. It organizes agent behavior as nodes and edges in a graph of actions and decisions.' },
+        { key: 'Cross-Encoder', detail: 'A cross-encoder jointly processes query and candidate document text to score relevance. It often gives stronger reranking quality than simpler vector similarity methods.' },
+        { key: 'Retrieval Poisoning', detail: 'Retrieval poisoning adds malicious or misleading documents into a retrieval system so the model is misled during generation. It is a key security risk in RAG.' },
+        { key: 'Least Privilege', detail: 'Least privilege means a tool or agent should be given only the permissions it needs. This reduces attack surface and limits damage from compromise.' },
+        { key: 'SHAP', detail: 'SHAP values explain how each feature contributes to a prediction by assigning credit or penalty to each input variable. They are especially useful for explaining model decisions in tabular data.' },
+        { key: 'LIME', detail: 'LIME explains a prediction by creating a simpler local model around one instance. It is useful for understanding how a prediction changes in a specific case.' },
+        { key: 'TreeExplainer', detail: 'TreeExplainer computes SHAP values efficiently for tree-based models such as random forests and gradient boosted trees. It works especially well for structured business datasets.' },
+        { key: 'DeepExplainer', detail: 'DeepExplainer is a SHAP variant for deep learning models. It works by approximating feature contributions for neural networks.' },
+        { key: 'KernelExplainer', detail: 'KernelExplainer is a model-agnostic SHAP method that estimates contributions by sampling around the input. It is slower but works across a wider set of model types.' },
+        { key: 'Counterfactuals', detail: 'Counterfactual explanations answer: what input change would have changed the outcome? This is especially helpful in loan, hiring, and risk decisions because it shows actionable changes.' },
+        { key: 'DiCE', detail: 'DiCE generates diverse counterfactual explanations; it creates several realistic ways a person could change the result. It helps both model explanation and decision support.' },
+        { key: 'Fairlearn', detail: 'Fairlearn is a toolkit for measuring and reducing unfairness in ML systems. It helps businesses audit whether predictions are systematically worse for certain groups.' },
+        { key: 'Demographic Parity', detail: 'Demographic parity means the positive prediction rate is similar across groups. It checks whether sensitive groups are treated similarly by the model.' },
+        { key: 'Equalized Odds', detail: 'Equalized odds means true positive and false positive rates are similar across groups. It is a stricter fairness condition used in risk-sensitive settings.' },
+        { key: 'Model Card', detail: 'A model card documents a model’s purpose, intended use, training data, limitations, and evaluation results. It is a practical governance artifact for transparent AI systems.' },
+        { key: 'Datasheet', detail: 'A datasheet records how data was collected, what fields are included, known biases, and limitations. It helps teams understand the assumptions behind the model.' },
+        { key: 'SR 11-7', detail: 'SR 11-7 is a supervisory guidance framework for model risk management in banking. It emphasizes governance, validation, and control of model-driven decisions.' },
+        { key: 'EU AI Act', detail: 'The EU AI Act is a regulatory framework for AI risk classification and compliance. It creates requirements for transparency, risk management, and oversight in high-risk AI applications.' },
+        { key: 'FedAvg', detail: 'Federated Averaging aggregates model updates from many clients instead of sharing raw data. It is the standard algorithm for distributed learning in privacy-sensitive systems.' },
+        { key: 'Differential Privacy', detail: 'Differential privacy limits how much a released model or update reveals about any one individual or data point. It adds controlled noise to protect sensitive data.' },
+        { key: 'Epsilon-Delta DP', detail: 'Epsilon-delta differential privacy formalizes privacy guarantees through the privacy loss parameter epsilon and probability delta. It is used to reason about privacy-utility trade-offs.' },
+        { key: 'Laplace Mechanism', detail: 'The Laplace mechanism adds noise sampled from a Laplace distribution to protect released statistics. It is one of the simplest ways to enforce differential privacy.' },
+        { key: 'Gaussian Mechanism', detail: 'The Gaussian mechanism adds Gaussian noise to model updates or aggregates. It is widely used in deep learning privacy settings and DP-SGD.' },
+        { key: 'Opacus DP-SGD', detail: 'Opacus is a library for differentially private training with PyTorch. DP-SGD adds noise during optimization to protect sensitive training data.' },
+        { key: 'Byzantine Attacks', detail: 'Byzantine attacks occur when malicious or faulty clients send corrupted updates to a federated system. These can poison the global model if not filtered or defended against.' },
+        { key: 'Secure Aggregation', detail: 'Secure aggregation allows a coordinator to combine updates without learning individual client values. It is a key privacy-preserving pattern in federated learning.' },
+        { key: 'Whisper', detail: 'OpenAI Whisper is a speech recognition model that converts audio to text with timestamps and good multilingual support. It is often used for transcripts and voice pipelines.' },
+        { key: 'Speaker Diarisation', detail: 'Speaker diarisation separates speech into different speakers, identifying who said what in an audio stream. It is common in meeting and call analysis.' },
+        { key: 'CLIP', detail: 'CLIP learns joint image-text embeddings and supports zero-shot classification. It connects images and language in a single representation space.' },
+        { key: 'BLIP-2', detail: 'BLIP-2 is a vision-language model that can answer questions about images and summarize visual content. It is useful for multimodal document understanding.' },
+        { key: 'LLaVA', detail: 'LLaVA is a vision-language model that combines a language model with visual capabilities. It can answer questions about charts, screenshots, and visually rich documents.' },
+        { key: 'LayoutLMv3', detail: 'LayoutLMv3 is a document understanding model that combines text, layout, and visual information. It is effective for structured documents like invoices, forms, and reports.' },
+        { key: 'Donut', detail: 'Donut is an OCR-free document understanding model that predicts structured content directly from the page image. It is useful for extracting key fields from forms and reports.' },
+        { key: 'Camelot / Pdfplumber', detail: 'These are table extraction tools for PDF documents. They help convert financial tables, statements, and annual-report tables into machine-readable data.' },
+        { key: 'GCN', detail: 'Graph Convolutional Networks learn from graph-structured data by aggregating neighbor information. They are commonly used in fraud and network analysis tasks.' },
+        { key: 'GraphSAGE', detail: 'GraphSAGE samples and aggregates information from neighboring nodes. It scales to larger graphs and supports inductive learning on unseen nodes.' },
+        { key: 'GAT', detail: 'Graph Attention Networks assign different weights to neighboring nodes based on relevance. This lets the model focus on more important connected entities.' },
+        { key: 'GIN', detail: 'Graph Isomorphism Networks are used to model complex relationships among nodes. They help represent higher-order graph patterns effectively.' },
+        { key: 'Link Prediction', detail: 'Link prediction estimates whether an edge should exist between two graph nodes. It is useful for identifying relationships, suspicious connections, or hidden transactions.' },
+        { key: 'Knowledge Graph', detail: 'A knowledge graph represents entities and relationships in a structured graph. It supports explainable graph-based reasoning and retrieval over connected concepts.' },
+        { key: 'GraphRAG', detail: 'GraphRAG combines graph structure with retrieval-augmented generation to answer questions over connected information. It is useful in financial and enterprise intelligence tasks.' },
+        { key: 'FastAPI', detail: 'FastAPI is a modern Python framework for building APIs quickly with validation, documentation, and async support. It is ideal for serving ML models and exposing business logic through HTTP endpoints.' },
+        { key: 'Docker Compose', detail: 'Docker Compose lets teams run multiple containers together with one configuration. It is often used to orchestrate APIs, databases, monitoring, and model services locally.' },
+        { key: 'Kubernetes', detail: 'Kubernetes is a container orchestration platform used to deploy and scale workloads. It is the standard solution for managing production services in cluster environments.' },
+        { key: 'Trivy', detail: 'Trivy scans container images and repositories for vulnerabilities and misconfigurations. It is widely used in secure on-premises or cloud DevSecOps pipelines.' },
+        { key: 'HashiCorp Vault', detail: 'Vault securely stores and distributes secrets such as API keys, tokens, and certificates. It helps prevent hardcoded credentials in deployment pipelines.' },
+        { key: 'mTLS', detail: 'Mutual TLS authenticates both the client and the server using certificates. It is used to secure internal service-to-service communication.' },
+        { key: 'RBAC', detail: 'Role-Based Access Control restricts actions to users or services based on their role. It reduces the risk of unauthorized access to model endpoints and infrastructure.' },
+        { key: 'STRIDE', detail: 'STRIDE is a threat-modeling framework for identifying spoofing, tampering, repudiation, information disclosure, denial of service, and elevation of privilege risks.' },
+        { key: 'MITRE ATLAS', detail: 'MITRE ATLAS is a knowledge base of adversarial tactics and techniques against AI systems. It helps teams map AI security threats to real attack patterns.' },
+        { key: 'Model Watermarking', detail: 'Model watermarking embeds identifiable patterns or signatures into a model to help prove ownership and detect unauthorized reuse. It supports IP protection strategies.' },
+        { key: 'Deepfake Detection', detail: 'Deepfake detection identifies manipulated audio or video generated by AI. It is used in misinformation defense, security, and media authenticity workflows.' },
+        { key: 'AI RMF', detail: 'The NIST AI Risk Management Framework provides governance guidance for managing AI risks throughout the lifecycle. It helps teams align AI systems with responsible use principles.' },
+        { key: 'ISO/IEC 42001', detail: 'ISO/IEC 42001 is the international management-system standard for AI. It helps organizations govern AI systems, accountability, and lifecycle risk management.' },
+        { key: 'NIST AI RMF 1.0', detail: 'This is the first version of NIST’s AI Risk Management Framework. It helps organizations govern AI risk, trustworthiness, and deployment readiness.' }
+      ].map((item) => {
+        const subject = item.key.toLowerCase();
+        const noun = item.key.split(' ')[0].toLowerCase();
+        const definition = item.definition || item.detail;
+        const financeAnalogy = item.financeAnalogy || `Think of ${item.key} like a risk control in a bank: it is not magic, it is a structured way of turning messy financial signals into a decision. A portfolio manager or credit officer uses it to reduce noise and focus on what really matters.`;
+        const realWorldExample = item.realWorldExample || `In a banking or investment setting, a team might use ${item.key} to monitor credit risk, analyze client profiles, detect suspicious activity, or improve investment decisions. For example, a credit risk team could use it to spot weak loan portfolios before losses rise.`;
+        const businessUse = item.businessUse || `This helps financial teams by making a complex signal easier to understand, compare, and act on. It is especially useful in risk management, fraud analysis, portfolio monitoring, and decision support.`;
+        return { ...item, definition, financeAnalogy, realWorldExample, businessUse, subject, noun };
+      });
+
+      const nav = document.getElementById('glossaryNav');
+      const panel = document.getElementById('glossaryPanel');
+
+      function renderGlossary(termKey) {
+        const item = glossary.find((entry) => entry.key === termKey) || glossary[0];
+        nav.querySelectorAll('a').forEach((link) => {
+          link.classList.toggle('active', link.dataset.term === item.key);
+        });
+
+        panel.innerHTML = `
+          <div class="meta">Training script</div>
+          <h3>${item.key}</h3>
+          <div class="glossary-script-block">
+            <div>
+              <h4>Definition</h4>
+              <p>${item.definition}</p>
+            </div>
+            <div>
+              <h4>Finance analogy</h4>
+              <p>${item.financeAnalogy}</p>
+            </div>
+            <div>
+              <h4>Real-world example</h4>
+              <p>${item.realWorldExample}</p>
+            </div>
+            <div>
+              <h4>Where it helps in finance</h4>
+              <p>${item.businessUse}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      const links = glossary.map((item) => `
+        <a href="#" data-term="${item.key}">${item.key}</a>
+      `).join('');
+      nav.innerHTML = links;
+
+      nav.addEventListener('click', (event) => {
+        const anchor = event.target.closest('a');
+        if (!anchor) return;
+        event.preventDefault();
+        renderGlossary(anchor.dataset.term);
+      });
+
+      renderGlossary(glossary[0].key);
+    </script>
+  </body>
+</html>

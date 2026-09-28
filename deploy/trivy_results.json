@@ -1,0 +1,40 @@
+{
+ "scanned": "aquasec/trivy config, 2026-09-27",
+ "findings": [
+  {
+   "File": "Dockerfile",
+   "Check": "(summary)",
+   "Severity": "",
+   "Result": "27 passed, 0 failed",
+   "Fix": ""
+  },
+  {
+   "File": "deploy/Dockerfile.naive",
+   "Check": "(summary)",
+   "Severity": "",
+   "Result": "24 passed, 3 failed",
+   "Fix": ""
+  },
+  {
+   "File": "deploy/Dockerfile.naive",
+   "Check": "DS-0001 ':latest' tag used",
+   "Severity": "MEDIUM",
+   "Result": "FAIL",
+   "Fix": "Add a tag to the image in the 'FROM' statement"
+  },
+  {
+   "File": "deploy/Dockerfile.naive",
+   "Check": "DS-0002 Image user should not be 'root'",
+   "Severity": "HIGH",
+   "Result": "FAIL",
+   "Fix": "Add 'USER <non root user name>' line to the Dockerfile"
+  },
+  {
+   "File": "deploy/Dockerfile.naive",
+   "Check": "DS-0026 No HEALTHCHECK defined",
+   "Severity": "LOW",
+   "Result": "FAIL",
+   "Fix": "Add HEALTHCHECK instruction in Dockerfile"
+  }
+ ]
+}
