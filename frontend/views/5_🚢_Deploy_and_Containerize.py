@@ -248,7 +248,8 @@ with tabs[4]:
         {"Tag": "v2.0", "Contents": "Adds Deploy / Security Lab / Roadmap pages, COPY --chown layout (smaller)"},
         {"Tag": "v2.1", "Contents": "Security-hardened (audit fixes, upgraded web stack, no curl), credits, grouped navigation, Security Posture page"},
         {"Tag": "v2.2", "Contents": "Switchable backend API (sidebar / ?backend= link, allow-listed + verified); one-go Container Apps guide"},
-        {"Tag": "latest", "Contents": "Always the newest pushed version (now v2.2)"},
+        {"Tag": "v2.3", "Contents": "Open-source release matching the GitHub repo; accurate SHAP base-rate display"},
+        {"Tag": "latest", "Contents": "Always the newest pushed version (now v2.3)"},
     ])
     st.markdown("**Tag vs digest:** a tag (`latest`) can be moved to a new image; a digest (`@sha256:…`) never changes. Production deployments pin digests.")
 

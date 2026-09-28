@@ -4,6 +4,8 @@
 financial health from six CAMEL ratios, explains every prediction, and shows how to deploy, attack and
 defend a real AI system, all from your browser.
 
+> 💻 **Source code, docs and notebooks:** [github.com/raushan1107/ai-ml-cybersecurity-bank-risk-capstone](https://github.com/raushan1107/ai-ml-cybersecurity-bank-risk-capstone): ⭐ star it on GitHub too!
+>
 > ⭐ **If this helps you learn or teach, please star this repository** (the ☆ button at the top of this page).
 > It helps others find it, and it's the best way to say thanks.
 
@@ -111,7 +113,8 @@ CAMEL API, and can be pinned with `CAMEL_LOCK_BACKEND=1`.
 
 | Tag | Contents |
 |---|---|
-| `latest` | Newest release (recommended) = `v2.2` |
+| `latest` | Newest release (recommended) = `v2.3` |
+| `v2.3` | Matches the public GitHub repository; accurate SHAP base-rate display; docs reorganised |
 | `v2.2` | Switchable backend API (sidebar or `?backend=` link, allow-listed + verified); one-go Azure Container Apps guide |
 | `v2.1` | Security-hardened release: SSRF fix, guarded chat, input limits, upgraded web stack, credits, grouped navigation, Security Posture page |
 | `v2.0` | Adds Deploy & Containerize, AI Security Lab and AI/ML Roadmap |
@@ -133,7 +136,12 @@ official CAMELS supervisory ratings and not financial advice.
 
 ## 📜 Version history: what each version contains
 
-**v2.2 · switchable backend** (latest)
+**v2.3 · open-source release** (latest)
+- 💻 Published on GitHub: [github.com/raushan1107/ai-ml-cybersecurity-bank-risk-capstone](https://github.com/raushan1107/ai-ml-cybersecurity-bank-risk-capstone), MIT-licensed, with models and data included so a clone runs straight away
+- 🐞 Fixed the SHAP "base rate" display (log-odds now shown as a probability, for example 6.5% instead of −267%)
+- 📚 All documentation under `docs/` with a reading guide; corrected learning-path details
+
+**v2.2 · switchable backend**
 - 🔌 A **Backend API** panel in the sidebar points the whole UI at any CAMEL Sentinel API (local, compose, or Azure Container Apps)
 - 🔗 One-click links: `http://localhost:8501/?backend=https://<api-app>.azurecontainerapps.io`
 - 🛡️ SSRF-safe: http(s) only, host allow-list (`CAMEL_BACKEND_ALLOWLIST`), must answer `/health` like a CAMEL API, no credentials in URLs; `CAMEL_LOCK_BACKEND=1` pins it
@@ -157,5 +165,5 @@ official CAMELS supervisory ratings and not financial advice.
 
 ---
 
-⭐ **Star this repo** if you found it useful · 👨‍💻 Developer: [Raushan Ranjan](https://raushan-ranjan.azurewebsites.net) · 📘 Books/Handbook/Notes written by [Raushan Ranjan](https://raushan-ranjan.azurewebsites.net):
+⭐ **Star this repo** here and on [GitHub](https://github.com/raushan1107/ai-ml-cybersecurity-bank-risk-capstone) if you found it useful · 👨‍💻 Developer: [Raushan Ranjan](https://raushan-ranjan.azurewebsites.net) · 📘 Books/Handbook/Notes written by [Raushan Ranjan](https://raushan-ranjan.azurewebsites.net):
 [AI/ML + Cybersecurity Handbook](https://raushan1107.github.io/AI-Machine-Learning-Handbook/).
